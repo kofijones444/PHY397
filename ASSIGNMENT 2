@@ -1,0 +1,42 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.linalg import eigh
+
+L = 1.0  # Length
+N = 100  # Number of points
+dx = L / (N - 1)  # point spacing
+x = np.linspace(0, L, N) 
+
+hbar = 1.0  # Reduced Planck's constant
+m = 1.0     # Particle mass
+
+def V(x):
+    return np.zeros_like(x) 
+
+H = np.zeros((N, N))
+
+# equations
+for i in range(1, N - 1):
+    H[i, i - 1] = -hbar**2 / (2 * m * dx**2)
+    H[i, i] = hbar**2 / (m * dx**2) + V(x[i])
+    H[i, i + 1] = -hbar**2 / (2 * m * dx**2)
+
+# Boundary conditions
+H[0, 0] = 1.0
+H[0, 1] = 0.0
+H[-1, -1] = 1.0
+H[-1, -2] = 0.0
+
+# the eigen values
+eigenvalues, eigenfunctions = eigh(H)
+
+plt.figure(figsize=(10, 6))
+for n in range(4):  # Plot the first 4 eigenfunctions
+    plt.plot(x, eigenfunctions[:, n], label=f'n = {n}, E = {eigenvalues[n]:.3f}')
+
+plt.title('Wavefunctions of the Time-Independent Schrödinger Equation')
+plt.xlabel('x')
+plt.ylabel('ψ(x)')
+plt.legend()
+plt.grid()
+plt.show()
